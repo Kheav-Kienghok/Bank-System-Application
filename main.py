@@ -36,16 +36,16 @@ class BankApplication:
         self.tk.configure(bg="light blue")
 
         
-        label = Label(self.tk, text="MyBANK Banking", font=("Arial", 20))
+        label = Label(self.tk, text="MyBANK Banking", font=("Arial", 20), bg = "light blue")
         label.grid(row=2, column=5, columnspan=13, padx=200)
 
-        username_label = Label(self.tk, text="Username:", font=("Arial", 11, "bold"))
+        username_label = Label(self.tk, text="Username:", font=("Arial", 11, "bold"), bg="white")
         username_label.grid(row=29, column=14)
 
         self.username_entry = Entry(self.tk)
         self.username_entry.grid(row=29, column=15, padx=10, pady=5)
 
-        password_label = Label(self.tk, text="Password:", font=("Arial", 11, "bold"))
+        password_label = Label(self.tk, text="Password:", font=("Arial", 11, "bold"), bg="white")
         password_label.grid(row=30, column=14)
 
         self.password_entry = Entry(self.tk, show="*") 
@@ -146,30 +146,6 @@ class BankApplication:
             messagebox.showinfo("Success", "Account created successfully!")
 
             self.tk.destroy()
-  
-
-    def deposit_btn(self, bank_account, bank_id, national_id, full_name):
-        amount = int(self.bank_number())
-
-        if amount is not None: 
-            bank_account.deposit(self.db.conn, amount, national_id, full_name, bank_id)
- 
-            updated_balance = bank_account.get_balance()
-            messagebox.showinfo("Success",f"Deposit of ${amount} successful!\n\nNew balance: ${updated_balance}")
-            
-        else:
-            messagebox.showerror("Error", "Please enter a valid amount.")
-
-    def withdraw_btn(self, bank_account, bank_id, national_id, full_name):
-        amount = int(self.bank_number())
-        
-        if amount is not None: 
-            bank_account.withdraw(self.db.conn, amount, national_id, full_name, bank_id)
-            updated_balance = bank_account.get_balance()
-            messagebox.showinfo("Success",f"Withdraw of ${amount} successful!\n\nNew balance: ${updated_balance}")
-            
-        else:
-            messagebox.showerror("Error", "Please enter a valid amount.")
 
     def exit_button(self):
         self.tk.destroy()
@@ -187,9 +163,6 @@ class BankApplication:
             success_window.title("Success")
             success_window.geometry("150x80")
             self.center_window(success_window)
-            
-            success_label = Label(success_window, text="Login successful!", font=("Arail", 13))
-            success_label.pack(pady=20)
             
             success_window.after(1500, success_window.destroy)
             
@@ -265,17 +238,48 @@ class BankApplication:
         bank_window.configure(bg="light blue")
         self.center_window(bank_window)
         
+        def deposit_btn(bank_account, bank_id, national_id, full_name):
+            amount = int(self.bank_number())
+
+            if amount is not None: 
+                bank_account.deposit(self.db.conn, amount, national_id, full_name, bank_id)
+                updated_balanced = bank_account.get_balance()
+                balance_label.config(text = f"Your balance: {updated_balanced}")
+                messagebox.showinfo("Success",f"Deposit of ${amount} successful!")
+                
+            else:
+                messagebox.showerror("Error", "Please enter a valid amount.")
+
+        def withdraw_btn(bank_account, bank_id, national_id, full_name):
+            amount = int(self.bank_number())
+            
+            if amount is not None: 
+                bank_account.withdraw(self.db.conn, amount, national_id, full_name, bank_id)
+                updated_balanced = bank_account.get_balance()
+                if amount > updated_balanced:
+                    messagebox.showerror("Error", f"You only have {updated_balanced}")
+                else:
+                    balance_label.config(text = f"Your balance: {updated_balanced}")
+                    messagebox.showinfo("Success",f"Withdraw of ${amount} successful!")
+                
+            else:
+                messagebox.showerror("Error", "Please enter a valid amount.")
+        
+        updated_balance = bank_account.get_balance()
 
         bank_title = Label(bank_window, text="MyBANK Banking", font=("Arial", 20))
         bank_title.grid(row=0, column=0, columnspan=3)
 
         account_label = Label(bank_window, text=f"Account Username: {username}", font=("Arial", 10))
-        account_label.grid(row=2, column=0, padx=30, pady=20, sticky=W)
+        account_label.grid(row=2, column=0, padx=30, pady=10, sticky=W)
+        
+        balance_label = Label(bank_window, text=f"Your balance: {updated_balance}", font=("Arial", 10))
+        balance_label.grid(row=3, column=0, padx=30, pady=5, sticky=W)
 
-        deposit = Button(bank_window, text="Deposit", command=lambda: self.deposit_btn(bank_account, bank_id, national_id, full_name), width=25, height=12)
-        deposit.grid(row=4, column=0, padx=35, pady=15)
+        deposit = Button(bank_window, text="Deposit", command=lambda: deposit_btn(bank_account, bank_id, national_id, full_name), width=25, height=12)
+        deposit.grid(row=4, column=0, padx=35, pady=10)
 
-        withdraw = Button(bank_window, text="Withdraw", command=lambda: self.withdraw_btn(bank_account, bank_id, national_id, full_name), width=25, height=12)
+        withdraw = Button(bank_window, text="Withdraw", command=lambda: withdraw_btn(bank_account, bank_id, national_id, full_name), width=25, height=12)
         withdraw.grid(row=4, column=2, padx=30, pady=10)
 
         exit_btn = Button(bank_window, text="Exit", command=self.exit_button, width=13, height=3)
@@ -283,5 +287,7 @@ class BankApplication:
         
 
 if __name__ == '__main__':
+    db = Database("database.db")
+    db.initialize()
     app = BankApplication()
     app.tk.mainloop()

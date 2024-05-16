@@ -114,7 +114,7 @@ class Database:
                 END;
             ''')
 
-            print("Database connection established successfully.")
+            # print("Database connection established successfully.")
         except sqlite3.Error as e:
             print("Error connecting to the database:", e)
 
