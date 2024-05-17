@@ -164,8 +164,6 @@ class BankApplication:
             success_window.geometry("150x80")
             self.center_window(success_window)
             
-            success_window.after(1500, success_window.destroy)
-            
             bank_account = BankAccount(account_holder=username, balance=result[5])
             
             bank_id = result[0]
@@ -174,7 +172,7 @@ class BankApplication:
             
             self.tk.withdraw() 
             
-            self.tk.after(2000, lambda: self.bank_account_window(username, bank_account, bank_id, national_id, full_name))
+            self.tk.after(1000, lambda: self.bank_account_window(username, bank_account, bank_id, national_id, full_name))
             
         else:
             messagebox.showerror("Error", "Authentication failed. Please try again.")
@@ -228,7 +226,12 @@ class BankApplication:
         Button(btns_frame, text="Enter", width=10, height=15, command = lambda: btn_click("Enter")).grid(row=1, column=3, rowspan=5, padx=1, pady=1)
 
         top.wait_window(top) 
-        return eval(input_text.get())
+            
+        input_value = input_text.get()
+        try:
+            return float(input_value)
+        except ValueError:
+            return 0
             
     def bank_account_window(self, username, bank_account, bank_id, national_id, full_name):
         bank_window = Toplevel()
@@ -239,33 +242,37 @@ class BankApplication:
         self.center_window(bank_window)
         
         def deposit_btn(bank_account, bank_id, national_id, full_name):
-            amount = int(self.bank_number())
-
-            if amount is not None: 
-                bank_account.deposit(self.db.conn, amount, national_id, full_name, bank_id)
-                updated_balanced = bank_account.get_balance()
-                balance_label.config(text = f"Your balance: {updated_balanced}")
-                messagebox.showinfo("Success",f"Deposit of ${amount} successful!")
-                
-            else:
+            try:
+                amount = self.bank_number()
+                  
+                if amount > 0:
+                    bank_account.deposit(self.db.conn, amount, national_id, full_name, bank_id)
+                    updated_balance = bank_account.get_balance()
+                    balance_label.config(text=f"Your balance: ${updated_balance}")
+                    messagebox.showinfo("Success", f"Deposit of ${amount} successful!")
+                else:
+                    messagebox.showerror("Error", "Please enter a positive amount.")
+            except ValueError:
                 messagebox.showerror("Error", "Please enter a valid amount.")
 
         def withdraw_btn(bank_account, bank_id, national_id, full_name):
-            amount = int(self.bank_number())
+            try:
+                amount = self.bank_number()
+            except ValueError:
+                messagebox.showerror("Error", "Invalid amount entered.")
+                return
             
-            if amount is not None: 
-                bank_account.withdraw(self.db.conn, amount, national_id, full_name, bank_id)
-                updated_balanced = bank_account.get_balance()
-                if amount > updated_balanced:
-                    messagebox.showerror("Error", f"You only have {updated_balanced}")
-                else:
-                    balance_label.config(text = f"Your balance: {updated_balanced}")
-                    messagebox.showinfo("Success",f"Withdraw of ${amount} successful!")
-                
+            current_balance = bank_account.get_balance()
+            
+            if amount > current_balance:
+                messagebox.showerror("Error", f"You only have ${current_balance}.")
             else:
-                messagebox.showerror("Error", "Please enter a valid amount.")
+                bank_account.withdraw(self.db.conn, amount, national_id, full_name, bank_id)
+                updated_balance = bank_account.get_balance()
+                balance_label.config(text=f"Your balance: ${updated_balance}")
+                messagebox.showinfo("Success", f"Withdrawal of ${amount} successful!")
         
-        updated_balance = bank_account.get_balance()
+        updated_balanced = bank_account.get_balance()
 
         bank_title = Label(bank_window, text="MyBANK Banking", font=("Arial", 20))
         bank_title.grid(row=0, column=0, columnspan=3)
@@ -273,7 +280,7 @@ class BankApplication:
         account_label = Label(bank_window, text=f"Account Username: {username}", font=("Arial", 10))
         account_label.grid(row=2, column=0, padx=30, pady=10, sticky=W)
         
-        balance_label = Label(bank_window, text=f"Your balance: {updated_balance}", font=("Arial", 10))
+        balance_label = Label(bank_window, text=f"Your balance: {updated_balanced}", font=("Arial", 10))
         balance_label.grid(row=3, column=0, padx=30, pady=5, sticky=W)
 
         deposit = Button(bank_window, text="Deposit", command=lambda: deposit_btn(bank_account, bank_id, national_id, full_name), width=25, height=12)
