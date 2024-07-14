@@ -14,8 +14,10 @@ The **MyBANK Banking Application** is an intuitive and user-friendly banking sys
 - `function.py`: Handles database connections and queries using SQLite.
 
 ## 🖼️ Screenshot
-![MyBANK Main Application](images\screenshot\main.png)
-![MyBANK Account Page Application](images\screenshot\accountpage.png)
+<p>
+  <img src="images/screenshot/main.png" alt="MyBANK Main Application" width="450" height="450" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="images/screenshot/accountpage.png" alt="MyBANK Account Page Application" width="450" height="450" />
+</p>
 
 *Brief Information: The screenshot above shows the main interface of the MyBANK Banking Application. Users can easily navigate through options to register, log in, deposit, and withdraw funds.*
 
