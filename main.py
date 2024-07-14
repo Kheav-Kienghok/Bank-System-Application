@@ -1,293 +1,295 @@
-from system_function import Database, BankAccount
 from tkinter import *
-from tkinter.ttk import Combobox
+from function import DatabaseFunction
 from tkinter import messagebox
+import os
 
-class BankApplication:
+class Window:
     def __init__(self):
-        self.tk = Tk()
-        self.db = Database("database.db")
-        self.gender_var = StringVar()
-        self.initialize_gui()
-        self.center_window(self.tk)
+        self.root = Tk()
+        self.create_init()
+        self.db = DatabaseFunction()
 
-    def open_exit(self, function_name):
-        self.tk.withdraw()
-        getattr(self, function_name)()
+    def create_init(self, width = 520, height = 365):
+        self.root.iconbitmap(os.path.join(os.getcwd(), 'images', 'bank_icon.ico'))
+        self.root.title("Bank System")
+        self.root.resizable(0, 0)
+    
+        self.root.configure(bg = "#ADD8E6")
+
+        self.x = (self.root.winfo_screenwidth() // 2) - (width // 2)
+        self.y = (self.root.winfo_screenheight() // 2) - (height // 2)
+        self.root.geometry(f'{width}x{height}+{self.x}+{self.y}')
         
-    def destroy_message_box(self):
-        self.tk.withdraw()
+        Label(self.root, text="MyBank Banking", font=("Poppins", 20, "bold", "underline"), bg = "#ADD8E6").pack(side = TOP, pady = 10)
         
-    def center_window(self, window):
-        window.update_idletasks()
-        width = window.winfo_width()
-        height = window.winfo_height()
-        
-        x = (window.winfo_screenwidth() // 2) - (width // 2)
-        y = (window.winfo_screenheight() // 2) - (height // 2)
-        
-        window.geometry('{}x{}+{}+{}'.format(width, height, x, y))
-        
-        
-    def initialize_gui(self):
-        self.tk.title("Bank System")
-        self.tk.geometry("629x393")
-        self.tk.resizable(0, 0)
-        self.tk.configure(bg="light blue")
-
-        
-        label = Label(self.tk, text="MyBANK Banking", font=("Arial", 20), bg = "light blue")
-        label.grid(row=2, column=5, columnspan=13, padx=200)
-
-        username_label = Label(self.tk, text="Username:", font=("Arial", 11, "bold"), bg="white")
-        username_label.grid(row=29, column=14)
-
-        self.username_entry = Entry(self.tk)
-        self.username_entry.grid(row=29, column=15, padx=10, pady=5)
-
-        password_label = Label(self.tk, text="Password:", font=("Arial", 11, "bold"), bg="white")
-        password_label.grid(row=30, column=14)
-
-        self.password_entry = Entry(self.tk, show="*") 
-        self.password_entry.grid(row=30, column=15, padx=10, pady=5)
-
-        open_account_btn = Button(self.tk, text="Open Bank Account", font=("Arial", 10), command=lambda: self.open_exit("create_bank_account"), width=20, height=10)
-        open_account_btn.grid(row=20, column=7, rowspan=21, columnspan=7, padx=10, pady=60)
-
-        login_btn = Button(self.tk, text="Login", font=("Arial", 10, "bold"), command=self.login_account, width=10)
-        login_btn.grid(row=33, column=15, padx=10, pady=5, sticky="ew")
-
-        exit_btn = Button(self.tk, text="Exit", font=("Arial", 15, "bold"), command=self.exit_button, width=12)
-        exit_btn.grid(row=41, column=15, padx=5, pady=10, sticky="se")
-
-    def create_bank_account(self):
-        self.bank_account_window = Toplevel(self.tk)
-        self.bank_account_window.title("User Information")
-        self.bank_account_window.geometry("500x650")
-        self.bank_account_window.resizable(0, 0)
-        self.bank_account_window.configure(bg="light gray")
-        self.center_window(self.bank_account_window) 
-
-        header_frame = Frame(self.bank_account_window, bg="light gray")
-        header_frame.pack(pady=20)
-
-        bank_label = Label(header_frame, text="MyBANK Banking", font=("Arial", 20,), bg="light gray")
-        bank_label.pack()
-
-        box_label = Label(self.bank_account_window, text="Register Bank Account", font=("Arial", 12, "underline"), bg="light gray")
-        box_label.pack(pady= 21)
-
-        user_info_frame = Frame(self.bank_account_window, bg="light gray")
-        user_info_frame.pack(pady=10)
-
-        labels = ["First name:", "Last name:", "Password:", "Confirm Password:", 
-                  "Create PIN (4 Digits):", "Confirm PIN:", "Birthdate (YYYY-MM-DD):", "Gender:", "Nation ID (9 Digits):"]
-
-        for i, label_text in enumerate(labels):
-            label = Label(user_info_frame, text=label_text, font=("Arial", 12))
-            label.grid(row=i, column=0, padx=20, pady=10, sticky="w")
-
-        self.ask_first_name_entry = Entry(user_info_frame)
-        self.ask_first_name_entry.grid(row=0, column=1, padx=20, pady=10)
-
-        self.ask_last_name_entry = Entry(user_info_frame)
-        self.ask_last_name_entry.grid(row=1, column=1, padx=20, pady=10)
-
-        self.ask_password_entry = Entry(user_info_frame, show="*")
-        self.ask_password_entry.grid(row=2, column=1, padx=20, pady=10)
-
-        self.confirm_password_entry = Entry(user_info_frame, show="*")
-        self.confirm_password_entry.grid(row=3, column=1, padx=20, pady=10)
-
-        self.ask_pin_number_entry = Entry(user_info_frame, show="*")
-        self.ask_pin_number_entry.grid(row=4, column=1, padx=20, pady=10)
-
-        self.confirm_pin_entry = Entry(user_info_frame, show="*")
-        self.confirm_pin_entry.grid(row=5, column=1, padx=20, pady=10)
-
-        self.ask_birthdate_entry = Entry(user_info_frame)
-        self.ask_birthdate_entry.grid(row=6, column=1, padx=20, pady=10)
-
-        gender_var = StringVar()
-        self.gender_var = gender_var  
-        gender_combobox = Combobox(user_info_frame, textvariable=gender_var, values=["Male", "Female"])
-        gender_combobox.grid(row=7, column=1, padx=20, pady=10)
-
-        self.ask_national_id_entry = Entry(user_info_frame)
-        self.ask_national_id_entry.grid(row=8, column=1, padx=20, pady=10)
-
-        create_account_btn = Button(self.bank_account_window, text="Create Account", command=self.create_account, font=("Arial", 13, "bold"))
-        create_account_btn.pack(pady= 25)
-
-
-    def create_account(self):
-        first_name = self.ask_first_name_entry.get().strip()
-        last_name = self.ask_last_name_entry.get().strip()
-        password = self.ask_password_entry.get().strip()
-        confirm_password = self.confirm_password_entry.get().strip()
-        pin = self.ask_pin_number_entry.get().strip()
-        confirm_pin = self.confirm_pin_entry.get().strip()
-        birthdate = self.ask_birthdate_entry.get().strip()
-        gender = self.gender_var.get().strip()
-        national_id = self.ask_national_id_entry.get().strip()
-
-        if not all([first_name, last_name, password, confirm_password, pin, confirm_pin, birthdate, gender, national_id]):
-            messagebox.showerror("Error", "Please fill in all required fields.")
-        elif password != confirm_password:
-            messagebox.showerror("Error", "Passwords do not match.")
-        elif len(national_id) < 9 or len(national_id) > 9:
-            messagebox.showerror("Error", "National ID must be 9 Digits!")
-        elif len(pin) < 4 or len(pin) > 4:
-            messagebox.showerror("Error", "PINs numbers must be 4 Digits!")
-        elif pin != confirm_pin:
-            messagebox.showerror("Error", "PINs do not match.")
-        else:
-            self.db.add_personal_information(first_name, last_name, password, pin, birthdate, gender, national_id)
-            messagebox.showinfo("Success", "Account created successfully!")
-
-            self.tk.destroy()
-
     def exit_button(self):
-        self.tk.destroy()
- 
+        self.root.quit()
+        
+    def show_page(self, page_class):
+        self.root.withdraw()
+        page_class()
+    
+    def show_main(self):
+        self.root.deiconify()
 
-    def login_account(self):
+
+class MainPage(Window):
+    def __init__(self):
+        super().__init__()
+        
+
+    def create_init(self):
+        super().create_init()
+
+        Button(self.root, text = "Exit", font = ("Poppins", 13), bg = "#000000", fg = "#FFFFFF", width = 8, height = 2, command = self.exit_button).place(x = 397, y = 310)
+
+        label_frame = LabelFrame(self.root, text = "Login Account", font = ("Poppins", 12, "bold"), bg = "#ADD8E6", padx = 10, pady = 10)
+        label_frame.pack(padx = 15, pady = 20)
+        
+        label_frame.grid_columnconfigure((0, 1, 2, 3), weight = 1)
+        label_frame.grid_rowconfigure((0, 1, 2, 3), weight = 1)
+
+        create_account_button = Button(label_frame, text = "Create Account", font = ("Poppins", 11), bg = "#ADD8E6", width = 20, height = 10, command = lambda: self.show_page(RegisterPage))
+        create_account_button.grid(row = 0, column = 0, rowspan = 3, sticky = "news")
+        
+        Label(label_frame, text = "Username:", font = ("Poppins", 11, "bold"), bg = "#ADD8E6").grid(row = 0, column = 2, sticky = "wn", padx = 10, pady = 5)
+        self.username_entry = Entry(label_frame, font = ("Poppins", 11), width = 25)
+        self.username_entry.grid(row = 0, rowspan = 1,column = 2, padx = 10, pady = 30)
+
+        Label(label_frame, text = "Password:", font = ("Poppins", 11, "bold"), bg = "#ADD8E6").grid(row = 0,rowspan = 1,column = 2, sticky = "ws", padx = 10)
+        self.password_entry = Entry(label_frame, font = ("Poppins", 11), show = "*", width = 25)
+        self.password_entry.grid(row = 1, column = 2, padx = 10)
+        
+        login_button = Button(label_frame, text = "Login", font = ("Poppins", 11), bg = "#000000", fg = "#FFFFFF", width = 10, height = 2, command = self.login_account_button)
+        login_button.grid(row = 2, column = 1, columnspan = 2, rowspan = 3, sticky = "se", padx = 8, pady = 5)
+
+    def login_account_button(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
-
-        result = self.db.check_bank_account(username, password)
-        authenticated = isinstance(result, list)
         
-        if authenticated:
-            success_window = Toplevel(self.tk)
-            success_window.title("Success")
-            success_window.geometry("150x80")
-            self.center_window(success_window)
-            
-            success_window.after(1500, success_window.destroy)
-            
-            bank_account = BankAccount(account_holder=username, balance=result[5])
-            
-            bank_id = result[0]
-            national_id = result[4]
-            full_name = " ".join(result[1:3])
-            
-            self.tk.withdraw() 
-            
-            self.tk.after(2000, lambda: self.bank_account_window(username, bank_account, bank_id, national_id, full_name))
-            
+        if not username or not password:
+            messagebox.showwarning("Warning!", "No empty fields allowed")
+            return
+        
+        valid_account = self.db.valid_bank_account(username, password)
+        
+        if isinstance(valid_account, list):
+            self.login_page(BankPage, valid_account)
         else:
-            messagebox.showerror("Error", "Authentication failed. Please try again.")
+            messagebox.showerror("Error", "No Data were found")
             
-        self.tk.mainloop()
+    def login_page(self, page_class, account_information):
+        self.root.withdraw()
+        page_class(account_information)
+        
+
+class RegisterPage(Window):
+    def __init__(self):
+        super().__init__()
+        
+    def show_main_page(self):
+        self.root.withdraw()
+        MainPage()
+        
+    def create_init(self):
+        super().create_init(width = 500, height = 600)
+        
+        self.register_exit_btn = Button(self.root, text = "Exit", font = ("Poppins", 13), bg = "#000000", fg = "#FFFFFF", width = 8, height = 2, command = self.exit_button)
+        self.register_exit_btn.place(x = 370, y = 545)
+        
+        self.register_back_btn = Button(self.root, text = "Back", font = ("Poppins", 13), bg = "#000000", fg = "#FFFFFF", width = 8, height = 2, command = lambda: self.show_page(MainPage))
+        self.register_back_btn.place(x = 45, y = 545)
+
+        label_frame = LabelFrame(self.root, text = "Register Account", font = ("Poppins", 12, "bold"), bg = "#ADD8E6", padx = 10, pady = 10)
+        label_frame.pack(padx = 15, pady = 15)
+        
+        label_frame.grid_columnconfigure((0, 1, 2, 3, 4, 5), weight = 1)
+        label_frame.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7, 8), weight = 1)
+
+        register_labels = ["Username:", "Password:", "Confirm Password:", "Create PINS:", "Confirm PINS:", "Birthdate:", "Gender:", "National ID:"]
+        
+        global register_entry_names
+        register_entry_names = ["username_entry", "password_entry", "confirm_password_entry", "create_pins_entry", "confirm_pins_entry", "birthdate_entry", "gender_entry", "national_id_entry"]
+
+        # Dictionary to store entry widgets
+        self.entries = {}
+
+        for i, (label_text, entry_name) in enumerate(zip(register_labels, register_entry_names)):
+            Label(label_frame, text = label_text, font = ("Poppins", 11, "bold"), bg = "#ADD8E6").grid(row = i, column = 0, sticky = "w", pady = 10)
+            entry = Entry(label_frame, font = ("Poppins", 11), width = 25)
+            entry.grid(row = i, column = 2, columnspan = 4, padx = 20)
+            self.entries[entry_name] = entry
+        
+        Button(label_frame, text = "Create Account", font = ("Poppins", 11, "bold"), bg = "#000000", fg = "#FFFFFF", width = 20, height = 2, command = self.create_account_button).grid(row = 8, column = 0, columnspan = 5, padx = 25, pady = 5, sticky = "e")
+
+        self.sucessful_register = Label(label_frame, text = "", font = ("Poppins", 11, "bold"), bg = "#ADD8E6")
+        
+        
+    def create_account_button(self):
+        information = [self.entries[entry_name].get().strip() for entry_name in self.entries]
+        result = self.db.create_customer_account(information)
+        
+        if result[0] == 200:
+            self.root.geometry(f"500x610+{self.x}+{self.y}")
+ 
+            self.register_exit_btn.place(x = 370, y = 555)
+            self.register_back_btn.place(x = 45, y = 555)
             
+            self.sucessful_register.config(text = f"{result[1]}")
+            self.sucessful_register.grid(row = 9, column = 0, columnspan = 7, padx = 10, sticky="we")
+        else:
+            messagebox.showerror("Error", result)        
+
+# Here
+class BankPage(Window):
+    def __init__(self, account_information):
+        self.account_information = account_information
+        super().__init__()
+
+    def create_init(self):
+        super().create_init(height = 430)
+
+        Button(self.root, text="Exit", font=("Poppins", 13), bg="#000000", fg="#FFFFFF", width=8, height=2, command=self.exit_button).place(x = 418, y = 375)
+
+        label_frame = LabelFrame(self.root, text="My Account", font=("Poppins", 12, "bold"), bg = "#ADD8E6", padx = 10, pady = 10)
+        label_frame.pack(padx = 20, pady = 20)
+
+        for i in range(4):
+            label_frame.grid_columnconfigure(i, weight = 1)
+            label_frame.grid_rowconfigure(i, weight = 1)
 
 
-    def bank_number(self):
-        top = Toplevel()
-        top.geometry("345x290")
-        top.resizable(0, 0)
-        self.center_window(top) 
-
-        input_text = StringVar()
-        expression = ""
+        Label(label_frame, text = "Username:", font = ("Poppins", 11, "underline"), bg = "#ADD8E6").grid(row = 0, column = 0, padx = 5, sticky="w")
+        username = Label(label_frame, text = self.account_information[1], font = ("Times", 11), bg = "#ADD8E6")
+        username.grid(row = 0, column = 1, padx = 5, sticky = "w")
         
-        def btn_click(item):
-            nonlocal expression 
-            if item == "Enter":
-                top.destroy()  
-                
-            else:
-                expression = expression + str(item)
-                input_text.set(expression)
+        Label(label_frame, text = "Your Balance:", font = ("Poppins", 11, "underline"), bg = "#ADD8E6").grid(row = 1, column = 0, padx = 5, pady = 5, sticky = "w")
+        global balance
+        balance = Label(label_frame, text = f"${self.account_information[5]}", font = ("Times", 11), bg = "#ADD8E6")
+        balance.grid(row = 1, column = 1, pady = 5, sticky = "w")
 
-        input_frame = Frame(top, width=312, height=50)
-        input_frame.pack(side=TOP)
+        Button(label_frame, text = "Deposit", font = ("Poppins", 11), width = 20, height = 10, command = lambda: self.withdraw_page(DepositPage)).grid(row = 2, column = 0, rowspan = 3, padx = 5, pady = 5, sticky = "news")
+        Button(label_frame, text = "Withdraw", font = ("Poppins", 11), width = 20, height = 10, command = lambda: self.withdraw_page(WithdrawPage)).grid(row = 2, column = 1, rowspan = 3, padx = 5, pady = 5, sticky = "news")
+        Button(label_frame, text = "History", font = ("Poppins", 11), width = 20, height = 10).grid(row = 2, column = 2, rowspan = 3, padx = 5, pady = 5, sticky = "news")
+        
+    def withdraw_page(self, page_class):
+        self.root.withdraw()
+        page_class(self, self.account_information)
 
-        input_field = Entry(input_frame, font=('arial', 18, 'bold'), width=45, justify=RIGHT, textvariable=input_text)
-        input_field.grid(row=0, column=0)
-        input_field.pack(ipady=10) 
+class SystemPage:
+    def __init__(self, main_app):
+        self.root = Toplevel(main_app.root)
+        self.main_app = main_app
+        self.db = DatabaseFunction()
+        self.create_init()
 
-        btns_frame = Frame(top, width=310, height=270)
-        btns_frame.pack()
+    def create_init(self, width = 400, height = 430):
+        self.root.title("Bank Application")
+        self.root.resizable(0, 0)
+        self.root.configure(bg = "#ADD8E6")
+        
+        x = (self.root.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.root.winfo_screenheight() // 2) - (height // 2)
+        self.root.geometry(f'{width}x{height}+{x}+{y}')
+        
+        Label(self.root, text = "MyBank Banking", font = ("Poppins", 20, "bold"), bg = "#ADD8E6").pack(pady = 5)
+        
+        Button(self.root, text = "Exit", font = ("Poppins", 13), bg = "#000000", fg = "#FFFFFF", width = 8, height = 2, command = self.exit_button).place(x = 295, y = 375)
+        Button(self.root, text = "Back", font = ("Poppins", 13), bg = "#000000", fg = "#FFFFFF", width = 8, height = 2, command = lambda: self.back_to_main()).place(x = 23, y = 375)
+        
+        self.input_text = StringVar()
+        self.amount_entry = Entry(self.root, font=("Poppins", 14), width = 32, justify = RIGHT, textvariable = self.input_text, state = "readonly", fg = "#000000")
+        self.amount_entry.pack(ipady = 10)
 
-        Button(btns_frame, text="7", width=10, height=3, command = lambda: btn_click(7)).grid(row=1, column=0, padx=1, pady=1)
-        Button(btns_frame, text="8", width=10, height=3, command = lambda: btn_click(8)).grid(row=1, column=1, padx=1, pady=1)
-        Button(btns_frame, text="9", width=10, height=3, command = lambda: btn_click(9)).grid(row=1, column=2, padx=1, pady=1)
+        label_frame = LabelFrame(self.root, text = "", font = ("Poppins", 12, "bold"), bg = "#ADD8E6", padx = 10, pady = 10)
+        label_frame.pack(padx = 20, pady = 20)
+        
+        for i in range(5):
+            label_frame.grid_columnconfigure(i, weight = 1)
+            label_frame.grid_rowconfigure(i, weight = 1)
+        
+        buttons = [
+            ('1', 0, 0, 1, 1), ('2', 0, 1, 1, 1), ('3', 0, 2, 1, 1), ('Delete', 0, 3, 1, 1),
+            ('4', 1, 0, 1, 1), ('5', 1, 1, 1, 1), ('6', 1, 2, 1, 1),
+            ('7', 2, 0, 1, 1), ('8', 2, 1, 1, 1), ('9', 2, 2, 1, 1),
+            ('0', 3, 0, 1, 2), ('.', 3, 2, 1, 1),
+            ('Enter', 1, 3, 4, 1)
+        ]
+        
+        for (text, row, col, rowspan, colspan) in buttons:
+            Button(label_frame, text = text, width = 10, height = 3, command = lambda t = text: self.button_click(t)).grid(row = row, column = col, rowspan = rowspan, columnspan = colspan, padx = 1, pady = 1, sticky = "news")
+        
+    def button_click(self, item):
 
-        Button(btns_frame, text="4", width=10, height=3, command = lambda: btn_click(4)).grid(row=2, column=0, padx=1, pady=1)
-        Button(btns_frame, text="5", width=10, height=3, command = lambda: btn_click(5)).grid(row=2, column=1, padx=1, pady=1)
-        Button(btns_frame, text="6", width=10, height=3, command = lambda: btn_click(6)).grid(row=2, column=2, padx=1, pady=1)
-
-        Button(btns_frame, text="1", width=10, height=3, command = lambda: btn_click(1)).grid(row=3, column=0, padx=1, pady=1)
-        Button(btns_frame, text="2", width=10, height=3, command = lambda: btn_click(2)).grid(row=3, column=1, padx=1, pady=1)
-        Button(btns_frame, text="3", width=10, height=3, command = lambda: btn_click(3)).grid(row=3, column=2, padx=1)
-        Button(btns_frame, text="0", width=24, height=3, command = lambda: btn_click(0)).grid(row=4, column=0, columnspan=2, padx=1, pady=1)
-        Button(btns_frame, text=".", width=10, height=3, command = lambda: btn_click('.')).grid(row=4, column=2, padx=1, pady=1)
-
-        Button(btns_frame, text="Enter", width=10, height=15, command = lambda: btn_click("Enter")).grid(row=1, column=3, rowspan=5, padx=1, pady=1)
-
-        top.wait_window(top) 
-        return eval(input_text.get())
+        if item == "Enter":
+            self.process_transaction()
+        elif item == "Delete":
+            self.input_text.set(self.input_text.get()[:-1])
+            self.update_amount_entry()
+        else:
+            current_value = self.input_text.get()
+            self.input_text.set(current_value + item)
+            self.update_amount_entry()
+    
+    def update_amount_entry(self):
+        self.amount_entry.config(state = NORMAL)
+        self.amount_entry.delete(0, END)
+        self.amount_entry.insert(0, self.input_text.get())
+        self.amount_entry.config(state = "readonly")
             
-    def bank_account_window(self, username, bank_account, bank_id, national_id, full_name):
-        bank_window = Toplevel()
-        bank_window.geometry("500x400")
-        bank_window.resizable(0, 0)
-        bank_window.title("Bank Account")
-        bank_window.configure(bg="light blue")
-        self.center_window(bank_window)
+    def back_to_main(self):
+        self.root.destroy()
+        self.main_app.show_main()
         
-        def deposit_btn(bank_account, bank_id, national_id, full_name):
-            amount = int(self.bank_number())
-
-            if amount is not None: 
-                bank_account.deposit(self.db.conn, amount, national_id, full_name, bank_id)
-                updated_balanced = bank_account.get_balance()
-                balance_label.config(text = f"Your balance: {updated_balanced}")
-                messagebox.showinfo("Success",f"Deposit of ${amount} successful!")
-                
-            else:
-                messagebox.showerror("Error", "Please enter a valid amount.")
-
-        def withdraw_btn(bank_account, bank_id, national_id, full_name):
-            amount = int(self.bank_number())
-            
-            if amount is not None: 
-                bank_account.withdraw(self.db.conn, amount, national_id, full_name, bank_id)
-                updated_balanced = bank_account.get_balance()
-                if amount > updated_balanced:
-                    messagebox.showerror("Error", f"You only have {updated_balanced}")
-                else:
-                    balance_label.config(text = f"Your balance: {updated_balanced}")
-                    messagebox.showinfo("Success",f"Withdraw of ${amount} successful!")
-                
-            else:
-                messagebox.showerror("Error", "Please enter a valid amount.")
-        
-        updated_balance = bank_account.get_balance()
-
-        bank_title = Label(bank_window, text="MyBANK Banking", font=("Arial", 20))
-        bank_title.grid(row=0, column=0, columnspan=3)
-
-        account_label = Label(bank_window, text=f"Account Username: {username}", font=("Arial", 10))
-        account_label.grid(row=2, column=0, padx=30, pady=10, sticky=W)
-        
-        balance_label = Label(bank_window, text=f"Your balance: {updated_balance}", font=("Arial", 10))
-        balance_label.grid(row=3, column=0, padx=30, pady=5, sticky=W)
-
-        deposit = Button(bank_window, text="Deposit", command=lambda: deposit_btn(bank_account, bank_id, national_id, full_name), width=25, height=12)
-        deposit.grid(row=4, column=0, padx=35, pady=10)
-
-        withdraw = Button(bank_window, text="Withdraw", command=lambda: withdraw_btn(bank_account, bank_id, national_id, full_name), width=25, height=12)
-        withdraw.grid(row=4, column=2, padx=30, pady=10)
-
-        exit_btn = Button(bank_window, text="Exit", command=self.exit_button, width=13, height=3)
-        exit_btn.grid(row=5, column=2, padx=30, pady=10, sticky=E)
+    def exit_button(self):
+        self.root.quit()
+    
+    def process_transaction(self):
+        raise NotImplementedError("This method should be implemented in subclasses.")
         
 
-if __name__ == '__main__':
-    db = Database("database.db")
-    db.initialize()
-    app = BankApplication()
-    app.tk.mainloop()
+class DepositPage(SystemPage):
+    def __init__(self, main_app, account_information):
+        self.account_information = account_information
+        super().__init__(main_app)
+        
+    def process_transaction(self):
+        amount = self.input_text.get()
+        username_id = self.account_information[0]
+        username = self.account_information[1]
+        
+        result = self.db.deposit(username, amount, username_id)  
+        
+        self.input_text.set("")
+        self.update_amount_entry()
+        
+        balance.config(text = f"{result[1]}")
+        
+        self.back_to_main()
+
+
+class WithdrawPage(SystemPage):
+    def __init__(self, main_app, account_information):
+        self.account_information = account_information
+        super().__init__(main_app)
+
+    def process_transaction(self):
+        amount = self.input_text.get()
+        username_id = self.account_information[0]
+        username = self.account_information[1]
+        
+        result = self.db.withdraw(username, amount, username_id)  
+        
+        self.input_text.set("")
+        self.update_amount_entry()
+        
+        if len(result) == 2:
+            balance.config(text = f"{result[1]}")
+        
+        self.back_to_main()
+
+
+# Create an instance of the Main_page class and start the Tkinter main loop
+if __name__ == "__main__":
+    app = MainPage()
+    app.root.mainloop()
