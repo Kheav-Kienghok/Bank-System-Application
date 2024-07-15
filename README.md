@@ -15,8 +15,8 @@ The **MyBANK Banking Application** is an intuitive and user-friendly banking sys
 
 ## 🖼️ Screenshot
 <p>
-  <img src="images/screenshot/main.png" alt="MyBANK Main Application" width="450" height="450" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="images/screenshot/accountpage.png" alt="MyBANK Account Page Application" width="450" height="450" />
+  <img src="images/screenshot/main.png" alt="MyBANK Main Application" width="400" height="400" />&nbsp;
+  <img src="images/screenshot/accountpage.png" alt="MyBANK Account Page Application" width="400" height="400" />
 </p>
 
 *Brief Information: The screenshot above shows the main interface of the MyBANK Banking Application. Users can easily navigate through options to register, log in, deposit, and withdraw funds.*
@@ -40,7 +40,7 @@ python main.py
 Or run main.py file directly from your IDE.
 
 ## 📜 License
-This project is licensed under the MIT License. See the LICENSE file for more details.
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/Kheav-Kienghok/Bank-System-Application/blob/main/License) file for more details.
 
 ## 🙌 Contributing
 Contributions are welcome! Please fork this repository and submit a pull request for any enhancements or bug fixes.
