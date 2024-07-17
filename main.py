@@ -165,7 +165,7 @@ class BankPage(Window):
         
         Label(label_frame, text = "Your Balance:", font = ("Poppins", 11, "underline"), bg = "#ADD8E6").grid(row = 1, column = 0, padx = 5, pady = 5, sticky = "w")
         global balance
-        balance = Label(label_frame, text = f"${self.account_information[5]}", font = ("Times", 11), bg = "#ADD8E6")
+        balance = Label(label_frame, text = f"${self.account_information[4]}", font = ("Times", 11), bg = "#ADD8E6")
         balance.grid(row = 1, column = 1, pady = 5, sticky = "w")
 
         Button(label_frame, text = "Deposit", font = ("Poppins", 11), width = 20, height = 10, command = lambda: self.withdraw_page(DepositPage)).grid(row = 2, column = 0, rowspan = 3, padx = 5, pady = 5, sticky = "news")
